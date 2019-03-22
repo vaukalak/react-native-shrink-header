@@ -1,12 +1,37 @@
-import React, { useState } from 'react';
-import Animated, { Easing } from 'react-native-reanimated';
+import React, { useState, useCallback } from 'react';
+import Animated  from 'react-native-reanimated';
 import {StyleSheet} from 'react-native';
 
 const { min, max, sub, concat, Value, multiply } = Animated;
 
-const MenuItem = ({ label, scroll, screenWidth, index, rotation, visible }) => {
+const styles = StyleSheet.create({
+  label: {
+    width: 80,
+    color: 'white',
+    textAlign: 'center',
+  },
+  background: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'white',
+  }
+});
+
+const HeaderMenuItem = ({
+  label,
+  scroll,
+  showOverlayAnimation,
+  screenWidth,
+  index,
+  visible,
+}) => {
 
   const [x] = useState(new Value(0));
+
+  const onLayout = useCallback(
+    ({ nativeEvent: { layout } }) => {
+      x.setValue(layout.x);
+    }
+  );
 
   const translation = min(scroll.interpolate({
     inputRange: [0, 70, 150, 1000],
@@ -23,6 +48,14 @@ const MenuItem = ({ label, scroll, screenWidth, index, rotation, visible }) => {
     outputRange: [0, 0, 1, 1],
   }), 1);
 
+  const rotation = index === 0 ?
+    showOverlayAnimation :
+    (
+      index === 3 ?
+        multiply(showOverlayAnimation, -1) :
+        undefined
+    );
+
 
   if (!visible) {
     return null;
@@ -30,9 +63,7 @@ const MenuItem = ({ label, scroll, screenWidth, index, rotation, visible }) => {
 
   return (
     <Animated.View
-      onLayout={({ nativeEvent: { layout } }) => {
-        x.setValue(layout.x);
-      }}
+      onLayout={onLayout}
       style={{
         transform: [
           {
@@ -53,27 +84,27 @@ const MenuItem = ({ label, scroll, screenWidth, index, rotation, visible }) => {
       <Animated.View
         style={{
           transform: [
-            { rotate: concat(multiply(rotation, 45), 'deg') },
+            {
+              rotate: concat(
+                multiply(rotation, 45),
+                'deg',
+              ),
+            },
             { scaleX: sub(1, min(translation, 0.7)) },
           ],
         }}
       >
         <Animated.View
           style={[
-            StyleSheet.absoluteFill,
-            {
-              backgroundColor: 'white',
-              opacity: background,
-            }
+            styles.background,
+            { opacity: background },
           ]}
         />
         <Animated.Text
-          style={{
-            width: 80,
-            color: 'white',
-            fontSize: multiply(sub(1, min(translation, 0.9)), 20),
-            textAlign: 'center',
-          }}
+          style={[
+            styles.label,
+            { fontSize: multiply(sub(1, min(translation, 0.9)), 20) },
+          ]}
         >
           {label}
         </Animated.Text>
@@ -82,4 +113,4 @@ const MenuItem = ({ label, scroll, screenWidth, index, rotation, visible }) => {
   );
 };
 
-export default MenuItem;
+export default HeaderMenuItem;

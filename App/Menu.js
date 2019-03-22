@@ -1,77 +1,103 @@
-import React, { useState } from 'react';
-import Animated from 'react-native-reanimated';
-import { Dimensions, View, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
+import Animated, { Easing } from 'react-native-reanimated';
+import HeaderMenuItem from './HeaderMenuItem';
+import OverlayMenu from './OverlayMenu';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    backgroundColor: 'grey',
-    left: 0,
-    top: 0,
-    right: 0,
+  menuItemsContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
+    position: 'absolute',
+    bottom: 10,
+    left: 0,
+    right: 0,
+    top: 0,
+    height: 190,
+    paddingBottom: 10,
+    justifyContent: 'space-around',
+    alignItems: 'flex-end',
   },
-  title: {
-    color: 'white',
-    fontSize: 60,
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'black',
+  },
+  switchToOverlayButton: {
+    width: 24,
+    height: 19,
+    right: 8,
+    top: 23,
+    position: 'absolute',
   },
 });
 
-const { width: screenWidth } = Dimensions.get('window');
-const { min, max, add, multiply, sub, divide, Value, interpolate } = Animated;
+const { max, multiply, add, Value } = Animated;
+
+const items = [
+  'MENU 1',
+  'MENU 2',
+  'MENU 3',
+  'MENU 4',
+];
 
 const Menu = ({ scroll }) => {
-
-  const [labelWidth] = useState(new Value(0));
-  const scrollProgress = min(divide(scroll, 140), 1);
-  const titleScale = max(sub(1, scrollProgress), 0.4);
-  const titleTranslationBase = sub(
-    1,
-    interpolate(scrollProgress, {
-      inputRange: [0, 0.5, 1],
-      outputRange: [0, 0, 1],
-    }),
-  );
-  const titleTranslation = max(titleTranslationBase, 0.4);
-
-  const lwi = multiply(labelWidth, min(titleTranslation, 1));
-  const lmti = sub(labelWidth, lwi);
-  const dyi = divide(sub(screenWidth, lwi), 2);
-  const lxi = sub(
-    screenWidth,
-    lwi,
-    divide(lmti, 2),
-    multiply(dyi, min(titleTranslationBase, 1)),
-    multiply(40, sub(1, min(titleTranslationBase, 1))),
-  );
+  const [showOverlayAnimation] = useState(new Value(0));
+  const [overlayVisible, setOverlayVisible] = useState(false);
+  const switchToOverlay = useCallback(() => {
+    setOverlayVisible(!overlayVisible);
+    Animated.timing(
+      showOverlayAnimation,
+      {
+        toValue: overlayVisible ? 0 : 1,
+        easing: Easing.out(Easing.back(1)),
+        duration: 800,
+      },
+    ).start();
+  });
 
   return (
-    <Animated.View
-      style={[
-        styles.container,
-        {
-          height: max(add(multiply(scroll, -1), 200), 60),
-        }
-      ]}
-    >
-      <Animated.Text
-        onLayout={({nativeEvent: {layout: {width}}}) => {
-          labelWidth.setValue(width);
-        }}
+    <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
+      {!!overlayVisible && (
+        <View style={styles.overlay} />
+      )}
+      <TouchableOpacity
+        onPress={switchToOverlay}
+        style={styles.switchToOverlayButton}
+      >
+        <Animated.View
+          style={{ flex: 1}}
+        />
+      </TouchableOpacity>
+      <Animated.View
         style={[
-          styles.title,
+          styles.menuItemsContainer,
           {
-            transform: [
-              { translateX: lxi },
-              { scale: titleScale },
-            ],
+            height: max(add(multiply(scroll, -1), 200), 60),
           }
         ]}
+        pointerEvents="none"
+
       >
-        TEXT
-      </Animated.Text>
-    </Animated.View>
+        {items.map((key, index) => (
+          <HeaderMenuItem
+            key={key}
+            showOverlayAnimation={showOverlayAnimation}
+            label={key}
+            visible={!overlayVisible || index === 0 || index === 3}
+            scroll={scroll}
+            screenWidth={screenWidth}
+            index={index}
+          />
+        ))}
+      </Animated.View>
+      {!!overlayVisible && (
+        <OverlayMenu
+          items={items}
+          showOverlayAnimation={showOverlayAnimation}
+        />
+      )}
+    </View>
   );
 };
 
