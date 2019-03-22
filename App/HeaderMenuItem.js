@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import Animated  from 'react-native-reanimated';
 import {StyleSheet} from 'react-native';
+import pure from './pure';
 
 const { min, max, sub, concat, Value, multiply } = Animated;
 
@@ -26,6 +27,10 @@ const HeaderMenuItem = ({
   visible,
   isSelected,
 }) => {
+
+  if (!visible) {
+    return null;
+  }
 
   const [x] = useState(new Value(0));
 
@@ -58,43 +63,42 @@ const HeaderMenuItem = ({
         undefined
     );
 
+  const containerTranslation = {
+    transform: [
+      {
+        translateX: max(
+          min(multiply(translation, screenWidth), sub(sub(screenWidth, x), 60)),
+          0
+        ),
+      }, {
+        translateY: sub(
+          multiply(-9, translationY),
+          multiply(multiply(translationY, 5), index),
+          multiply(rotation, 7.5),
+        ),
+      }
+    ]
+  };
 
-  if (!visible) {
-    return null;
-  }
+  const containerRotation = {
+    transform: [
+      {
+        rotate: concat(
+          multiply(rotation, 45),
+          'deg',
+        ),
+      },
+      { scaleX: sub(1, min(translation, 0.7)) },
+    ],
+  };
 
   return (
     <Animated.View
       onLayout={onLayout}
-      style={{
-        transform: [
-          {
-            translateX: max(
-              min(multiply(translation, screenWidth), sub(sub(screenWidth, x), 60)),
-              0
-            ),
-          }, {
-            translateY: sub(
-              multiply(-9, translationY),
-              multiply(multiply(translationY, 5), index),
-              multiply(rotation, 7.5),
-            ),
-          }
-        ]
-      }}
+      style={containerTranslation}
     >
       <Animated.View
-        style={{
-          transform: [
-            {
-              rotate: concat(
-                multiply(rotation, 45),
-                'deg',
-              ),
-            },
-            { scaleX: sub(1, min(translation, 0.7)) },
-          ],
-        }}
+        style={containerRotation}
       >
         <Animated.View
           style={[
@@ -118,4 +122,4 @@ const HeaderMenuItem = ({
   );
 };
 
-export default HeaderMenuItem;
+export default pure(HeaderMenuItem);

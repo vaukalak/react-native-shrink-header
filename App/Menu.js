@@ -5,6 +5,7 @@ import HeaderMenuItem from './HeaderMenuItem';
 import OverlayMenu from './OverlayMenu';
 
 const styles = StyleSheet.create({
+  flex: { flex: 1 },
   menuItemsContainer: {
     flexDirection: 'row',
     position: 'absolute',
@@ -57,7 +58,7 @@ const Menu = ({ scroll, items, screenWidth, selectedItem }) => {
         style={styles.switchToOverlayButton}
       >
         <Animated.View
-          style={{ flex: 1}}
+          style={styles.flex}
         />
       </TouchableOpacity>
       <Animated.View

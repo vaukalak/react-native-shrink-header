@@ -1,6 +1,7 @@
 import React from 'react';
 import Animated from 'react-native-reanimated';
 import { StyleSheet } from 'react-native';
+import pure from './pure';
 
 const styles = StyleSheet.create({
   label: {
@@ -42,4 +43,4 @@ const OverlayMenuItem = ({ animation, index, text }) => (
   </Animated.Text>
 );
 
-export default OverlayMenuItem;
+export default pure(OverlayMenuItem);

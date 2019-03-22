@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import OverlayMenuItem from './OverlayMenuItem';
+import pure from './pure';
 
 const styles = StyleSheet.create({
   menu: {
@@ -28,4 +29,4 @@ const OverlayMenu = ({ items, showOverlayAnimation }) => (
   </View>
 );
 
-export default OverlayMenu;
+export default pure(OverlayMenu);
