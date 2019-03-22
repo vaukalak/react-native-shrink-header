@@ -1,10 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Animated, { Easing } from 'react-native-reanimated';
 import HeaderMenuItem from './HeaderMenuItem';
 import OverlayMenu from './OverlayMenu';
-
-const { width: screenWidth } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   menuItemsContainer: {
@@ -34,14 +32,7 @@ const styles = StyleSheet.create({
 
 const { max, multiply, add, Value } = Animated;
 
-const items = [
-  'MENU 1',
-  'MENU 2',
-  'MENU 3',
-  'MENU 4',
-];
-
-const Menu = ({ scroll }) => {
+const Menu = ({ scroll, items, screenWidth, selectedItem }) => {
   const [showOverlayAnimation] = useState(new Value(0));
   const [overlayVisible, setOverlayVisible] = useState(false);
   const switchToOverlay = useCallback(() => {
@@ -82,6 +73,7 @@ const Menu = ({ scroll }) => {
         {items.map((key, index) => (
           <HeaderMenuItem
             key={key}
+            isSelected={selectedItem === key}
             showOverlayAnimation={showOverlayAnimation}
             label={key}
             visible={!overlayVisible || index === 0 || index === 3}

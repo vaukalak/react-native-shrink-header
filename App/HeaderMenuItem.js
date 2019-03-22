@@ -7,6 +7,7 @@ const { min, max, sub, concat, Value, multiply } = Animated;
 const styles = StyleSheet.create({
   label: {
     width: 80,
+    fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
   },
@@ -23,6 +24,7 @@ const HeaderMenuItem = ({
   screenWidth,
   index,
   visible,
+  isSelected,
 }) => {
 
   const [x] = useState(new Value(0));
@@ -68,7 +70,7 @@ const HeaderMenuItem = ({
         transform: [
           {
             translateX: max(
-              min(multiply(translation, 400), sub(sub(screenWidth, x), 60)),
+              min(multiply(translation, screenWidth), sub(sub(screenWidth, x), 60)),
               0
             ),
           }, {
@@ -103,7 +105,10 @@ const HeaderMenuItem = ({
         <Animated.Text
           style={[
             styles.label,
-            { fontSize: multiply(sub(1, min(translation, 0.9)), 20) },
+            {
+              fontSize: multiply(sub(1, min(translation, 0.9)), 16),
+              opacity: isSelected ? 1 : 0.8
+            },
           ]}
         >
           {label}

@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import Animated from 'react-native-reanimated';
-import { Dimensions, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet } from 'react-native';
+
+const backgroundAsset = require('../assets/background.jpg');
 
 const styles = StyleSheet.create({
   container: {
@@ -18,10 +20,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const { width: screenWidth } = Dimensions.get('window');
 const { min, max, add, multiply, sub, divide, Value, interpolate } = Animated;
 
-const Header = ({ scroll }) => {
+const Header = ({ scroll, title, screenWidth }) => {
 
   const [labelWidth] = useState(new Value(0));
   const onLabelLayout = useCallback(
@@ -51,6 +52,11 @@ const Header = ({ scroll }) => {
     multiply(40, sub(1, min(titleTranslationBase, 1))),
   );
 
+  const layerStyle = [
+    StyleSheet.absoluteFill,
+    { height: max(add(multiply(scroll, -1), 200), 60) }
+  ];
+
   return (
     <Animated.View
       style={[
@@ -58,6 +64,26 @@ const Header = ({ scroll }) => {
         { height: max(add(multiply(scroll, -1), 200), 60) },
       ]}
     >
+      <Animated.Image
+        style={layerStyle}
+        resizeMode="cover"
+        source={backgroundAsset}
+      />
+      <Animated.View
+        style={[
+          layerStyle,
+          {
+            backgroundColor: 'black',
+            opacity: interpolate(
+              scrollProgress,
+              {
+                inputRange: [0, 1],
+                outputRange: [0.4, 0.7],
+              }
+            )
+          }
+        ]}
+      />
       <Animated.Text
         onLayout={onLabelLayout}
         style={[
@@ -70,7 +96,7 @@ const Header = ({ scroll }) => {
           }
         ]}
       >
-        TEXT
+        {title}
       </Animated.Text>
     </Animated.View>
   );
