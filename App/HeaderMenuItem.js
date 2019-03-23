@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import Animated  from 'react-native-reanimated';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, TouchableOpacity } from 'react-native';
 import pure from './pure';
 
 const { min, max, sub, concat, Value, multiply } = Animated;
@@ -97,27 +97,29 @@ const HeaderMenuItem = ({
       onLayout={onLayout}
       style={containerTranslation}
     >
-      <Animated.View
-        style={containerRotation}
-      >
+      <TouchableOpacity activeOpacity={0.5}>
         <Animated.View
-          style={[
-            styles.background,
-            { opacity: background },
-          ]}
-        />
-        <Animated.Text
-          style={[
-            styles.label,
-            {
-              fontSize: multiply(sub(1, min(translation, 0.9)), 16),
-              opacity: isSelected ? 1 : 0.8
-            },
-          ]}
+          style={containerRotation}
         >
-          {label}
-        </Animated.Text>
-      </Animated.View>
+          <Animated.View
+            style={[
+              styles.background,
+              { opacity: background },
+            ]}
+          />
+          <Animated.Text
+            style={[
+              styles.label,
+              {
+                fontSize: multiply(sub(1, min(translation, 0.9)), 16),
+                opacity: isSelected ? 1 : 0.8
+              },
+            ]}
+          >
+            {label}
+          </Animated.Text>
+        </Animated.View>
+      </TouchableOpacity>
     </Animated.View>
   );
 };

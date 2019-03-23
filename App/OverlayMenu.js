@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const OverlayMenu = ({ items, showOverlayAnimation }) => (
+const OverlayMenu = ({ items, showOverlayAnimation, selectedItem }) => (
   <View
     pointerEvents="box-none"
     style={styles.menu}
@@ -19,6 +19,7 @@ const OverlayMenu = ({ items, showOverlayAnimation }) => (
     <View>
       {items.map((key, index) => (
         <OverlayMenuItem
+          isSelected={selectedItem === key}
           key={key}
           index={index}
           animation={showOverlayAnimation}

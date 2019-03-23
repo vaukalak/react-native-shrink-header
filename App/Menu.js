@@ -53,14 +53,6 @@ const Menu = ({ scroll, items, screenWidth, selectedItem }) => {
       {!!overlayVisible && (
         <View style={styles.overlay} />
       )}
-      <TouchableOpacity
-        onPress={switchToOverlay}
-        style={styles.switchToOverlayButton}
-      >
-        <Animated.View
-          style={styles.flex}
-        />
-      </TouchableOpacity>
       <Animated.View
         style={[
           styles.menuItemsContainer,
@@ -68,8 +60,6 @@ const Menu = ({ scroll, items, screenWidth, selectedItem }) => {
             height: max(add(multiply(scroll, -1), 200), 60),
           }
         ]}
-        pointerEvents="none"
-
       >
         {items.map((key, index) => (
           <HeaderMenuItem
@@ -84,9 +74,18 @@ const Menu = ({ scroll, items, screenWidth, selectedItem }) => {
           />
         ))}
       </Animated.View>
+      <TouchableOpacity
+        onPressIn={switchToOverlay}
+        style={styles.switchToOverlayButton}
+      >
+        <Animated.View
+          style={styles.flex}
+        />
+      </TouchableOpacity>
       {!!overlayVisible && (
         <OverlayMenu
           items={items}
+          selectedItem={selectedItem}
           showOverlayAnimation={showOverlayAnimation}
         />
       )}
